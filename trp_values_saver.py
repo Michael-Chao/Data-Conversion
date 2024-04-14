@@ -1,3 +1,5 @@
+# 记录ADSB文件所有点的TRP时间及其之间的差值
+
 import json
 import os
 import pandas as pd
