@@ -3,6 +3,52 @@ from scipy.interpolate import interp1d
 import json
 from pathlib import Path
 import os
+import matplotlib.pyplot as plt
+
+
+# 绘制原始数据
+def plot_original_data(data):
+    timestamps = [entry[0] for entry in data]
+    lons = [entry[1] for entry in data]
+    lats = [entry[2] for entry in data]
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(lons, lats, marker='o', linestyle='', color='b', label='Original Data')
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.title('Original ADSB Data')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
+# 绘制插值后的数据
+def plot_interpolated_data(timestamps, sampled_lons, sampled_lats):
+    plt.figure(figsize=(10, 6))
+    plt.plot(sampled_lons, sampled_lats, marker='o', linestyle='', color='r', label='Interpolated Data')
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.title('Interpolated ADSB Data')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
+# 绘制对比图
+def plot_comparison(data, timestamps, sampled_lons, sampled_lats):
+    timestamps_orig = [entry[0] for entry in data]
+    lons_orig = [entry[1] for entry in data]
+    lats_orig = [entry[2] for entry in data]
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(lons_orig, lats_orig, marker='o', linestyle='', color='b', label='Original Data')
+    plt.plot(sampled_lons, sampled_lats, marker='o', linestyle='', color='r', label='Interpolated Data')
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.title('Comparison of Original and Interpolated ADSB Data')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 
 # 读取ADSB文件并处理数据
@@ -68,14 +114,23 @@ def process_file(input_file_path, output_file_path):
     # 保存采样结果
     save_sampled_data(timestamps, sampled_lons, sampled_lats, output_file_path)
 
+    # 绘制原始数据
+    # plot_original_data(data)
+    #
+    # # 绘制插值后的数据
+    # plot_interpolated_data(timestamps, sampled_lons, sampled_lats)
+    #
+    # # 绘制对比图
+    # plot_comparison(data, timestamps, sampled_lons, sampled_lats)
+
 
 # 主函数
 def main():
     # file_path = r'D:\Project\Convert_Dataset\fusiondata\filter_ADSB\20220701_1.txt'  # 替换为你的ADSB文件路径
     # output_file = r'D:\Project\Convert_Dataset\fusiondata\test_adsb.txt'  # 保存采样结果的文件路径
 
-    base_path = r'D:\Project\Convert_Dataset\fusiondata\filter_ADSB'
-    output_folder = r'D:\Project\Convert_Dataset\resampled_ADSB'
+    base_path = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\filter_ADSB'
+    output_folder = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\resampled_ADSB'
 
     # 创建输出文件夹（如果不存在）
     Path(output_folder).mkdir(parents=True, exist_ok=True)
