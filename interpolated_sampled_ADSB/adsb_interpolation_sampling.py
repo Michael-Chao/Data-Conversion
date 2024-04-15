@@ -52,17 +52,27 @@ def plot_comparison(data, timestamps, sampled_lons, sampled_lats):
 
 
 # 读取ADSB文件并处理数据
+# def load_data(file_path):
+#     data = []
+#     with open(file_path, 'r') as file:
+#         data_list = json.load(file)
+#         for entry in data_list:
+#             timestamp = float(entry['TRP'])  # 使用TRP字段作为时间戳
+#             lon = float(entry['LON'])
+#             lat = float(entry['LAT'])
+#             data.append((timestamp, lon, lat))
+#     return data
+
 def load_data(file_path):
     data = []
     with open(file_path, 'r') as file:
-        data_list = json.load(file)
-        for entry in data_list:
+        for line in file:
+            entry = json.loads(line.strip())
             timestamp = float(entry['TRP'])  # 使用TRP字段作为时间戳
             lon = float(entry['LON'])
             lat = float(entry['LAT'])
             data.append((timestamp, lon, lat))
     return data
-
 
 # 对数据进行插值拟合
 def interpolate_data(data):
@@ -89,17 +99,38 @@ def sample_data(lon_interp, lat_interp):
 
 
 # 保存采样结果
+# def save_sampled_data(timestamps, lons, lats, output_file):
+#     with open(output_file, 'w') as file:
+#         for i in range(len(timestamps)):
+#             file.write(f"{timestamps[i]}, {lons[i]}, {lats[i]}\n")
 def save_sampled_data(timestamps, lons, lats, output_file):
+    output_dir = os.path.dirname(output_file)
+    os.makedirs(output_dir, exist_ok=True)  # 创建目录，如果不存在则创建
     with open(output_file, 'w') as file:
         for i in range(len(timestamps)):
             file.write(f"{timestamps[i]}, {lons[i]}, {lats[i]}\n")
 
 
+# def process_files(base_path, adsb_contents, output_folder):
+#     for file_name in adsb_contents:
+#         input_file_path = os.path.join(base_path, file_name)
+#         output_file_path = os.path.join(output_folder, file_name)
+#         process_file(input_file_path, output_file_path)
+
 def process_files(base_path, adsb_contents, output_folder):
-    for file_name in adsb_contents:
-        input_file_path = os.path.join(base_path, file_name)
-        output_file_path = os.path.join(output_folder, file_name)
-        process_file(input_file_path, output_file_path)
+    for subfolder_name in os.listdir(base_path):
+        subfolder_path = os.path.join(base_path, subfolder_name)
+        if os.path.isdir(subfolder_path):
+            process_subfolder(subfolder_path, output_folder)
+
+def process_subfolder(subfolder_path, output_folder):
+    subfolder_name = os.path.basename(subfolder_path)
+    print(f"正在处理 {subfolder_name} 文件夹...")
+    for filename in os.listdir(subfolder_path):
+        if filename.endswith('.txt'):
+            input_file_path = os.path.join(subfolder_path, filename)
+            output_file_path = os.path.join(output_folder, os.path.basename(subfolder_path), filename)
+            process_file(input_file_path, output_file_path)
 
 def process_file(input_file_path, output_file_path):
     # 加载数据
@@ -126,11 +157,10 @@ def process_file(input_file_path, output_file_path):
 
 # 主函数
 def main():
-    # file_path = r'D:\Project\Convert_Dataset\fusiondata\filter_ADSB\20220701_1.txt'  # 替换为你的ADSB文件路径
-    # output_file = r'D:\Project\Convert_Dataset\fusiondata\test_adsb.txt'  # 保存采样结果的文件路径
-
-    base_path = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\filter_ADSB'
-    output_folder = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\resampled_ADSB'
+    # base_path = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\filter_ADSB'
+    # output_folder = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\resampled_ADSB'
+    base_path = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\adsb_cut'
+    output_folder = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\resampled_ADSBcut'
 
     # 创建输出文件夹（如果不存在）
     Path(output_folder).mkdir(parents=True, exist_ok=True)
@@ -149,6 +179,8 @@ def main():
                      '20220720_2.txt',
                      '20220724_4.txt']
 
+    # 处理所有文件
+    # process_files(base_path, adsb_contents, output_folder)
     # 处理所有文件
     process_files(base_path, adsb_contents, output_folder)
 
