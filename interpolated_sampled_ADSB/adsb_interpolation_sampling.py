@@ -1,3 +1,12 @@
+"""
+ADSB数据重模块
+提供ADSB数据的拟合，并每隔一秒进行重新采样
+
+作者：钞旭
+版本：1.0
+日期：2024-04-16
+"""
+
 import numpy as np
 from scipy.interpolate import interp1d
 import json
@@ -52,22 +61,11 @@ def plot_comparison(data, timestamps, sampled_lons, sampled_lats):
 
 
 # 读取ADSB文件并处理数据
-# def load_data(file_path):
-#     data = []
-#     with open(file_path, 'r') as file:
-#         data_list = json.load(file)
-#         for entry in data_list:
-#             timestamp = float(entry['TRP'])  # 使用TRP字段作为时间戳
-#             lon = float(entry['LON'])
-#             lat = float(entry['LAT'])
-#             data.append((timestamp, lon, lat))
-#     return data
-
 def load_data(file_path):
     data = []
     with open(file_path, 'r') as file:
-        for line in file:
-            entry = json.loads(line.strip())
+        data_list = json.load(file)
+        for entry in data_list:
             timestamp = float(entry['TRP'])  # 使用TRP字段作为时间戳
             lon = float(entry['LON'])
             lat = float(entry['LAT'])
@@ -97,25 +95,12 @@ def sample_data(lon_interp, lat_interp):
     sampled_lats = lat_interp(timestamps)
     return timestamps, sampled_lons, sampled_lats
 
-
-# 保存采样结果
-# def save_sampled_data(timestamps, lons, lats, output_file):
-#     with open(output_file, 'w') as file:
-#         for i in range(len(timestamps)):
-#             file.write(f"{timestamps[i]}, {lons[i]}, {lats[i]}\n")
 def save_sampled_data(timestamps, lons, lats, output_file):
     output_dir = os.path.dirname(output_file)
     os.makedirs(output_dir, exist_ok=True)  # 创建目录，如果不存在则创建
     with open(output_file, 'w') as file:
         for i in range(len(timestamps)):
             file.write(f"{timestamps[i]}, {lons[i]}, {lats[i]}\n")
-
-
-# def process_files(base_path, adsb_contents, output_folder):
-#     for file_name in adsb_contents:
-#         input_file_path = os.path.join(base_path, file_name)
-#         output_file_path = os.path.join(output_folder, file_name)
-#         process_file(input_file_path, output_file_path)
 
 def process_files(base_path, output_folder):
     for subfolder_name in os.listdir(base_path):
@@ -125,11 +110,17 @@ def process_files(base_path, output_folder):
 
 def process_subfolder(subfolder_path, output_folder):
     subfolder_name = os.path.basename(subfolder_path)
+    folder_path = os.path.join(output_folder, subfolder_name)
+    if os.path.exists(folder_path):
+        for existing_file in os.listdir(folder_path):
+            existing_file_path = os.path.join(folder_path, existing_file)
+            os.remove(existing_file_path)
+        print(f"已删除 {folder_path} 中的现有文件.")
     print(f"正在处理 {subfolder_name} 文件夹...")
     for filename in os.listdir(subfolder_path):
         if filename.endswith('.txt'):
             input_file_path = os.path.join(subfolder_path, filename)
-            output_file_path = os.path.join(output_folder, os.path.basename(subfolder_path), filename)
+            output_file_path = os.path.join(output_folder, subfolder_name, filename)
             process_file(input_file_path, output_file_path)
 
 def process_file(input_file_path, output_file_path):
