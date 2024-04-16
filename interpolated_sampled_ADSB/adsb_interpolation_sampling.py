@@ -117,7 +117,7 @@ def save_sampled_data(timestamps, lons, lats, output_file):
 #         output_file_path = os.path.join(output_folder, file_name)
 #         process_file(input_file_path, output_file_path)
 
-def process_files(base_path, adsb_contents, output_folder):
+def process_files(base_path, output_folder):
     for subfolder_name in os.listdir(base_path):
         subfolder_path = os.path.join(base_path, subfolder_name)
         if os.path.isdir(subfolder_path):
@@ -157,32 +157,14 @@ def process_file(input_file_path, output_file_path):
 
 # 主函数
 def main():
-    # base_path = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\filter_ADSB'
-    # output_folder = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\resampled_ADSB'
     base_path = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\adsb_cut'
     output_folder = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\resampled_ADSBcut'
 
     # 创建输出文件夹（如果不存在）
     Path(output_folder).mkdir(parents=True, exist_ok=True)
 
-    adsb_contents = ['20220701_1.txt', '20220701_2.txt', '20220701_3.txt', '20220701_4.txt',
-                     '20220703_1.txt', '20220703_2.txt', '20220703_4.txt',
-                     '20220704_1.txt', '20220704_2.txt', '20220704_3.txt', '20220704_4.txt',
-                     '20220706_1.txt', '20220706_2.txt', '20220706_3.txt', '20220706_4.txt',
-                     '20220708_1.txt', '20220708_2.txt', '20220708_4.txt',
-                     '20220710_1.txt', '20220710_2.txt', '20220710_4.txt',
-                     '20220711_1.txt', '20220711_2.txt', '20220711_4.txt',
-                     '20220713_2.txt',
-                     '20220715_2.txt',
-                     '20220718_4.txt',
-                     '20220719_2.txt',
-                     '20220720_2.txt',
-                     '20220724_4.txt']
-
     # 处理所有文件
-    # process_files(base_path, adsb_contents, output_folder)
-    # 处理所有文件
-    process_files(base_path, adsb_contents, output_folder)
+    process_files(base_path, output_folder)
 
 
 if __name__ == "__main__":
