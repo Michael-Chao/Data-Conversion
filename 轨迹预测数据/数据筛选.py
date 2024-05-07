@@ -3,7 +3,7 @@
 #
 # result_adsb_file_path = r'D:\Project\Convert_Dataset\轨迹预测数据\result_ADSB\20220701.txt'
 # filter_adsb_file_path = r'D:\Project\Convert_Dataset\轨迹预测数据\filter_ADSB\20220701_4.txt'
-# output_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\filter_ADSB_2'
+# output_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\filterADSB_0506'
 #
 # # 确保输出文件夹存在
 # os.makedirs(output_folder, exist_ok=True)
