@@ -1,9 +1,9 @@
 import json
+import os
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 # 文件路径
-file_path = r'D:\Project\Convert_Dataset\fusiondata\filter_ADSB\20220715_2.txt'
+file_path = r'D:\Project\Convert_Dataset\fusiondata\filter_ADSB\20220711_1.txt'
 
 # 读取文件内容
 with open(file_path, 'r', encoding='utf-8') as file:
@@ -13,48 +13,39 @@ with open(file_path, 'r', encoding='utf-8') as file:
 # 解析JSON数组
 data_array = json.loads(data_content)
 
-# 初始化列表来存储经纬度和高度数据
+# 初始化列表来存储经纬度数据
 latitudes = []
 longitudes = []
-heights = []
 
 # 遍历JSON数组中的每个对象
 for data_obj in data_array:
-    # 检查'LAT'、'LON'和'GH'字段是否存在
-    if 'LAT' in data_obj and 'LON' in data_obj and 'GH' in data_obj:
-        # 提取经纬度和高度信息
-        lat = float(data_obj.get('LAT', 0))
-        lon = float(data_obj.get('LON', 0))
-        height = float(data_obj.get('GH', 0))
-        # 如果经纬度和高度不为0，则将其添加到列表中
-        if lat != 0 and lon != 0 and height != 0:
-            latitudes.append(lat)
-            longitudes.append(lon)
-            heights.append(height)
+    # 提取经纬度信息
+    lat = float(data_obj['LAT'])
+    lon = float(data_obj['LON'])
+    # 将经纬度添加到列表中
+    latitudes.append(lat)
+    longitudes.append(lon)
+    print(lon, lat)
 
-# 创建三维图形
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+# 定义保存图像的路径和文件名
+save_path = r'D:\Project\Convert_Dataset\interpolated_sampled_ADSB\轨迹图片'
+file_name = os.path.basename(file_path).replace('.txt', '') + '.png'
+save_file = os.path.join(save_path, file_name)
 
 # 绘制散点图
-ax.scatter(longitudes, latitudes, heights, color='blue', marker='o')
+plt.figure(figsize=(10, 8))
+plt.scatter(longitudes[:], latitudes[:], color='blue', marker='o', label='Points')
+plt.xlabel('Longitude (LON)')
+plt.ylabel('Latitude (LAT)')
+plt.title('Scatter Plot of Latitude and Longitude')
+plt.legend()
+plt.grid(True)
 
-# 设置坐标轴标签
-ax.set_xlabel('Longitude (LON)')
-ax.set_ylabel('Latitude (LAT)')
-ax.set_zlabel('Height (GH)')
+# 设置 y 轴标签格式为固定格式
+plt.ticklabel_format(axis='y', style='plain')
 
-# 设置初始视角
-ax.view_init(elev=30, azim=45)
+# 保存图像
+plt.savefig(save_file)
 
-# 启用交互式模式
-plt.ion()
+# 显示图像
 plt.show()
-
-# 循环等待用户交互
-while True:
-    # 交互式改变视角
-    azim = int(input("Enter azim angle (0-360): "))
-    elev = int(input("Enter elev angle (0-180): "))
-    ax.view_init(elev=elev, azim=azim)
-    plt.draw()
