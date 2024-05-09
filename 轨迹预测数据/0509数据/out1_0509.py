@@ -1,12 +1,11 @@
 import os
-import json
-from pathlib import Path
 import pandas as pd
+from pathlib import Path
 
 
 def load_data(file_path):
     """
-    Load data from an Excel file and return a DataFrame.
+    Load data from a CSV file and return a DataFrame.
 
     Args:
         file_path (str): File path.
@@ -14,13 +13,13 @@ def load_data(file_path):
     Returns:
         pd.DataFrame: DataFrame containing the data.
     """
-    df = pd.read_excel(file_path)
+    df = pd.read_csv(file_path)
     return df
 
 
 def save_segment(data_segment, output_folder, file_name):
     """
-    Save data to a specified file without header.
+    Save data to a specified file in CSV format.
 
     Args:
         data_segment (pd.DataFrame): Data segment to be saved.
@@ -29,8 +28,8 @@ def save_segment(data_segment, output_folder, file_name):
     """
     folder_path = os.path.join(output_folder, file_name)
     Path(folder_path).mkdir(parents=True, exist_ok=True)
-    output_file = os.path.join(folder_path, f"{len(os.listdir(folder_path)) + 1}.txt")
-    data_segment.to_csv(output_file, index=False, header=False)  # 设置 header=False 不保存标题行
+    output_file = os.path.join(folder_path, f"{len(os.listdir(folder_path)) + 1}.csv")
+    data_segment.to_csv(output_file, index=False)  # Setting index=False to exclude index column
 
 
 def clear_existing_files(output_folder, adsb_contents):
@@ -71,13 +70,14 @@ def process_files(base_path, output_folder, adsb_contents):
             trp = row['TRP']
             lon = row['LON']
             lat = row['LAT']
-            state = row['STATE']
+            gs = row['GS']
+            ta = row['TA']
 
             if prev_trp is not None and abs(trp - prev_trp) > 15:
                 save_segment(segment_data, output_folder, file_name[:-4])
                 segment_data = pd.DataFrame()
 
-            new_row = pd.DataFrame({'TRP': [trp], 'LON': [lon], 'LAT': [lat], 'STATE': [state]})
+            new_row = pd.DataFrame({'TRP': [trp], 'LON': [lon], 'LAT': [lat], 'GS': [gs], 'TA': [ta]})
             segment_data = pd.concat([segment_data, new_row], ignore_index=True)
             prev_trp = trp
 
@@ -90,8 +90,8 @@ def main():
     base_path = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\降落\2_deduplication_0508'
     output_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\降落\3_out1'
 
-    adsb_contents = ['20220701_1.xlsx', '20220701_3.xlsx', '20220703_1.xlsx', '20220704_1.xlsx',
-                     '20220706_1.xlsx', '20220706_3.xlsx', '20220708_1.xlsx', '20220710_1.xlsx']
+    adsb_contents = ['20220701_1.csv', '20220701_3.csv', '20220703_1.csv', '20220704_1.csv', '20220704_3.csv',
+                     '20220706_1.csv', '20220706_3.csv', '20220708_1.csv', '20220710_1.csv']
 
     # Clear existing files in the output folder
     clear_existing_files(output_folder, adsb_contents)
