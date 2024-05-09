@@ -87,8 +87,8 @@ def process_files(base_path, output_folder, adsb_contents):
 
 
 def main():
-    base_path = r'D:\Project\20240502\降落\改进的01234'
-    output_folder = r'D:\Project\20240502\降落\out1'
+    base_path = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\降落\2_deduplication_0508'
+    output_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\降落\3_out1'
 
     adsb_contents = ['20220701_1.xlsx', '20220701_3.xlsx', '20220703_1.xlsx', '20220704_1.xlsx',
                      '20220706_1.xlsx', '20220706_3.xlsx', '20220708_1.xlsx', '20220710_1.xlsx']

@@ -2,10 +2,10 @@ import os
 import pandas as pd
 
 # 原始文件夹路径
-input_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\降落\1_original_0508'
+input_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\起飞\1_original_0508'
 
 # 输出文件夹路径
-output_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\降落\2_deduplication_0508'
+output_folder = r'D:\Project\Convert_Dataset\轨迹预测数据\0509数据\起飞\2_deduplication_0508'
 
 # 确保输出文件夹存在
 if not os.path.exists(output_folder):
